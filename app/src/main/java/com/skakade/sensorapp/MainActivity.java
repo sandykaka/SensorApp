@@ -93,11 +93,16 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public void onBackPressed() {
-        DebugLogger.infoLog("Fragment Stack","" + getFragmentManager().getBackStackEntryCount());
 
-        if (getFragmentManager().getBackStackEntryCount() > 0){
+        DebugLogger.infoLog("Fragment Stack", ""+getFragmentManager().getBackStackEntryCount());
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        }else if (getFragmentManager().getBackStackEntryCount()>0) {
             getFragmentManager().popBackStackImmediate();
-        }else
+        }
+        else{
+            //exitApp();
             super.onBackPressed();
+        }
     }
 }
