@@ -1,6 +1,9 @@
 package com.skakade.sensorapp;
 
-import android.os.Bundle;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.os.*;
+import android.os.Process;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -67,8 +70,25 @@ public class MainActivity extends ActionBarActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+        if (id == R.id.action_exit){
+            exitApp();
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void exitApp() {
+        new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_info)
+                .setTitle("Confirm")
+                .setMessage("Do you want to close the app?")
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        android.os.Process.killProcess(Process.myPid());
+                    }
+                })
+                .setNegativeButton("Cancel",null).show();
     }
 
     @Override
