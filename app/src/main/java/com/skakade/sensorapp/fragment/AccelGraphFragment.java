@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -80,7 +81,7 @@ public class AccelGraphFragment extends Fragment implements SensorEventListener 
 
 
         initializeGraph();
-
+        setHasOptionsMenu(true);
         //mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
@@ -176,5 +177,11 @@ public class AccelGraphFragment extends Fragment implements SensorEventListener 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         textViewAccuracy.setText(titleAccuracy + ": " + accuracy);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.action_settings).setVisible(false);
     }
 }

@@ -2,17 +2,26 @@ package com.skakade.sensorapp;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.os.*;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.Bundle;
 import android.os.Process;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.skakade.sensorapp.adapter.ListViewAdapter;
+import com.skakade.sensorapp.adapter.ListViewAdapterDrawer;
+import com.skakade.sensorapp.fragment.AccelFragment;
 import com.skakade.sensorapp.fragment.ListViewFragment;
 
 
@@ -25,7 +34,18 @@ public class MainActivity extends ActionBarActivity {
 
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
-    private String[] mPlanetTitles;
+    private String[] sensorArray;
+    private Button buttonLogging;
+    private boolean isLogEnabled = false;
+    private boolean isSensorChecked = false;
+    private CheckBox checkBoxAccel;
+    private TextView textViewLogging;
+
+    AccelFragment accelFragment;
+    private FileCreater fileCreater;
+
+    private FileSDWriter fileSDWriter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,22 +53,49 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         mTitle = mDrawerTitle = getTitle();
-        mPlanetTitles = getResources().getStringArray(R.array.sensor_array);
+        sensorArray = getResources().getStringArray(R.array.sensor_array);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
+
+
+
 
         // set a custom shadow that overlays the main content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         // set up the drawer's list view with items and click listener
-        mDrawerList.setAdapter(new ListViewAdapter(this, mPlanetTitles));
+        mDrawerList.setAdapter(new ListViewAdapterDrawer(this, sensorArray));
         // mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         // enable ActionBar app icon to behave as action to toggle nav drawer
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
+        // ActionBarDrawerToggle ties together the the proper interactions
+                // between the sliding drawer and the action bar app icon
+                mDrawerToggle = new ActionBarDrawerToggle(
+                this,                  /* host Activity */
+                mDrawerLayout,         /* DrawerLayout object */
+                R.drawable.ic_launcher,  /* nav drawer image to replace 'Up' caret */
+                R.string.drawer_open,  /* "open drawer" description for accessibility */
+                R.string.drawer_close  /* "close drawer" description for accessibility */
+        ) {
+            public void onDrawerClosed(View view) {
+                getSupportActionBar().setTitle(mTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            public void onDrawerOpened(View drawerView) {
+                getSupportActionBar().setTitle(mDrawerTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        if (savedInstanceState == null) {
+            //selectItem(0);
+        }
         listViewFragment = new ListViewFragment();
 
-        getFragmentManager().beginTransaction().add(R.id.content_frame, listViewFragment).commit();
+        getFragmentManager().beginTransaction().add(R.id.content_frame, listViewFragment, "ListViewFrag").commit();
     }
 
 
@@ -57,6 +104,12 @@ public class MainActivity extends ActionBarActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.action_exit).setVisible(false);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -105,4 +158,68 @@ public class MainActivity extends ActionBarActivity {
             super.onBackPressed();
         }
     }
+
+
+    public void onClickLogging(View view) {
+
+        buttonLogging = (Button) findViewById(R.id.buttonLogging);
+        checkBoxAccel = (CheckBox) findViewById(R.id.checkBoxAccel);
+        textViewLogging = (TextView) findViewById(R.id.textViewLogging);
+
+        if (checkBoxAccel.isChecked()) {
+            isSensorChecked = true;
+            isLogEnabled = true;
+        }
+        if (isSensorChecked) {
+            buttonLogging.setText("Stop Logging");
+            textViewLogging.setVisibility(View.VISIBLE);
+            checkBoxAccel.setVisibility(View.GONE);
+            isSensorChecked = false;
+            checkBoxAccel.setChecked(false);
+            startLogging();
+            return;
+        }
+        if (isLogEnabled){
+            buttonLogging.setText("Start Logging");
+            textViewLogging.setVisibility(View.GONE);
+            checkBoxAccel.setVisibility(View.VISIBLE);
+            isLogEnabled = false;
+            stopLogging();
+
+        }else {
+            Toast.makeText(this, "Please check sensor to log", Toast.LENGTH_SHORT).show();
+        }
+        }
+
+
+    public void startLogging() {
+        accelFragment = new AccelFragment();
+
+        getFragmentManager().beginTransaction().add(accelFragment, "AccelFrag").commit();
+
+        Log.i("start", "startLogging");
+    }
+
+    private void stopLogging() {
+
+        listViewFragment = (ListViewFragment) getFragmentManager().findFragmentByTag("ListViewFrag");
+
+        listViewFragment.onPause();
+
+        Toast.makeText(this,"fileName: " + accelFragment.getFileName(), Toast.LENGTH_LONG).show();
+
+// Tell the media scanner about the new file so that it is
+        // immediately available to the user.
+        MediaScannerConnection.scanFile(this,
+                new String[]{accelFragment.fileName.toString()}, null,
+                new MediaScannerConnection.OnScanCompletedListener() {
+                    public void onScanCompleted(String path, Uri uri) {
+                        Log.i("ExternalStorage", "Scanned " + path + ":");
+                        Log.i("ExternalStorage", "-> uri=" + uri);
+
+                    }
+                });
+
+            }
+
 }

@@ -5,6 +5,10 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="action_exit">Exit</string>
+    <string name="drawer_open">Drawer Open</string>
+    <string name="drawer_close">Drawer Close</string>
+    <string name="button_logging">Start Logging</string>
+    <string name="textViewLogging">logging</string>
     <string-array name="sensor_array">
         <item>Accelerometer</item>
     </string-array>

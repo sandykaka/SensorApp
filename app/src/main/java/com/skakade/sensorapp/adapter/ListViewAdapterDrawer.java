@@ -10,19 +10,19 @@ import android.widget.TextView;
 
 import com.skakade.sensorapp.R;
 
-public class ListViewAdapter extends ArrayAdapter<String> {
+public class ListViewAdapterDrawer extends ArrayAdapter<String> {
 
     ImageView imageViewSensor;
     TextView textViewSensor;
 
-    public ListViewAdapter(Context context, String[] sensorArray) {
-        super(context, R.layout.adapter_listview, sensorArray);
+    public ListViewAdapterDrawer(Context context, String[] sensorArray) {
+        super(context, R.layout.adapter_listview_drawer, sensorArray);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater layoutInflater = LayoutInflater.from(getContext());
-        View view = layoutInflater.inflate(R.layout.adapter_listview, parent, false);
+        View view = layoutInflater.inflate(R.layout.adapter_listview_drawer, parent, false);
 
         imageViewSensor = (ImageView) view.findViewById(R.id.imageViewSensor);
         textViewSensor = (TextView) view.findViewById(R.id.textViewSensor);
@@ -33,6 +33,5 @@ public class ListViewAdapter extends ArrayAdapter<String> {
         return view;
 
     }
-
 
 }
