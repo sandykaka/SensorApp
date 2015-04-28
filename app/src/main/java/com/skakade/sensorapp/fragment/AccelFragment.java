@@ -9,7 +9,6 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,10 @@ import com.skakade.sensorapp.FileCreater;
 import com.skakade.sensorapp.FileSDWriter;
 import com.skakade.sensorapp.R;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class AccelFragment extends Fragment implements SensorEventListener {
 
@@ -49,8 +51,6 @@ public class AccelFragment extends Fragment implements SensorEventListener {
 
         isExternalStorageWritable();
 
-        Log.i("onActivityCreated", "Activity");
-
         textViewAccelX = (TextView) getView().findViewById(R.id.textViewAccelX);
         textViewAccelY = (TextView) getView().findViewById(R.id.textViewAccelY);
         textViewAccelZ = (TextView) getView().findViewById(R.id.textViewAccelZ);
@@ -67,6 +67,15 @@ public class AccelFragment extends Fragment implements SensorEventListener {
 
         fileName = fileCreater.FileName(sensorName);
 
+        try {
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName, true));
+            bufferedWriter.write(sensorName + "|" + "Timestamp" + "|" + "[X, Y, Z]" + "\n");
+            bufferedWriter.flush();
+            bufferedWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
     public File getFileName() {
         return fileName;
@@ -82,10 +91,12 @@ public class AccelFragment extends Fragment implements SensorEventListener {
             float xValue = event.values[0];
             float yValue = event.values[1];
             float zValue = event.values[2];
+            double timeStamp = event.timestamp;
+
 
            fileSDWriter = new FileSDWriter();
 
-           fileSDWriter.writeToFile(fileName, xValue, yValue, zValue);
+           fileSDWriter.writeToFile(fileName, sensorName,timeStamp,xValue, yValue, zValue);
 
         }
     }

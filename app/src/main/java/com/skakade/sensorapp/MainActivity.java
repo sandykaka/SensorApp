@@ -4,8 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.Process;
+import android.os.*;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -79,12 +78,12 @@ public class MainActivity extends ActionBarActivity {
                 R.string.drawer_close  /* "close drawer" description for accessibility */
         ) {
             public void onDrawerClosed(View view) {
-                getSupportActionBar().setTitle(mTitle);
+                //getSupportActionBar().setTitle(mTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
 
             public void onDrawerOpened(View drawerView) {
-                getSupportActionBar().setTitle(mDrawerTitle);
+                //getSupportActionBar().setTitle(mDrawerTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
@@ -108,7 +107,7 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.action_exit).setVisible(false);
+        //menu.findItem(R.id.action_exit).setVisible(false);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -126,7 +125,9 @@ public class MainActivity extends ActionBarActivity {
         if (id == R.id.action_exit){
             exitApp();
         }
-
+        if (mDrawerToggle.onOptionsItemSelected(item)){
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -138,7 +139,8 @@ public class MainActivity extends ActionBarActivity {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        android.os.Process.killProcess(Process.myPid());
+                        onBackPressed();
+                        android.os.Process.killProcess(android.os.Process.myPid());
                     }
                 })
                 .setNegativeButton("Cancel",null).show();
@@ -198,6 +200,7 @@ public class MainActivity extends ActionBarActivity {
         getFragmentManager().beginTransaction().add(accelFragment, "AccelFrag").commit();
 
         Log.i("start", "startLogging");
+
     }
 
     private void stopLogging() {

@@ -12,12 +12,14 @@ public class FileSDWriter {
 
     private static final String TAG = "FILEWRITE";
 
-    public void writeToFile(File fileName, float xValue, float yValue, float zValue) {
+    public void writeToFile(File fileName, String sensorName, double timeStamp, float xValue, float yValue, float zValue) {
 
         try {
             if (fileName != null) {
+
                 BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName, true));
-                bufferedWriter.write("X: " + xValue + "\n" + "Y: " + yValue + "Z: " + zValue);
+                //bufferedWriter.write(sensorName + "|" + "Timestamp" + "|" + "[X, Y, Z]" + "\n");
+                bufferedWriter.write(timeStamp + "|" +"[" + xValue + "," + yValue + "," + zValue + "]" + "\n");
                 bufferedWriter.flush();
                 bufferedWriter.close();
             }

@@ -63,7 +63,6 @@ public class AccelGraphFragment extends Fragment implements SensorEventListener 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getActivity().setTitle("Graph View");
-
         textViewXValue = (TextView) getView().findViewById(R.id.textView_graph_XValue);
         textViewYValue = (TextView) getView().findViewById(R.id.textView_graph_YValue);
         textViewZValue = (TextView) getView().findViewById(R.id.textView_graph_ZValue);
@@ -76,9 +75,6 @@ public class AccelGraphFragment extends Fragment implements SensorEventListener 
 
         startRange =- mSensor.getMaximumRange();
         endRange = mSensor.getMaximumRange();
-
-
-
 
         initializeGraph();
         setHasOptionsMenu(true);
@@ -181,7 +177,10 @@ public class AccelGraphFragment extends Fragment implements SensorEventListener 
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.action_exit).setVisible(false);
         menu.findItem(R.id.action_settings).setVisible(false);
+        super.onPrepareOptionsMenu(menu);
     }
+
+
 }
