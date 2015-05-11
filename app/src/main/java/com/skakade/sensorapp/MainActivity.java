@@ -1,10 +1,12 @@
 package com.skakade.sensorapp;
 
 import android.app.AlertDialog;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.*;
+import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -15,20 +17,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.ListView;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.skakade.sensorapp.adapter.ListViewAdapterDrawer;
 import com.skakade.sensorapp.fragment.AccelFragment;
+import com.skakade.sensorapp.fragment.ListViewDrawerFragment;
 import com.skakade.sensorapp.fragment.ListViewFragment;
 
 
 public class MainActivity extends ActionBarActivity {
 
     ListViewFragment listViewFragment;
+    ListViewDrawerFragment listViewDrawerFragment;
     private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
+    private FrameLayout mDrawerList;
+    //private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
 
     private CharSequence mDrawerTitle;
@@ -54,15 +58,19 @@ public class MainActivity extends ActionBarActivity {
         mTitle = mDrawerTitle = getTitle();
         sensorArray = getResources().getStringArray(R.array.sensor_array);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
-
-
-
+        mDrawerList = (FrameLayout) findViewById(R.id.left_drawer);
 
         // set a custom shadow that overlays the main content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         // set up the drawer's list view with items and click listener
-        mDrawerList.setAdapter(new ListViewAdapterDrawer(this, sensorArray));
+        listViewDrawerFragment = new ListViewDrawerFragment();
+
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        fragmentTransaction.add(R.id.left_drawer,listViewDrawerFragment, "ListViewDrawerFrag").commit();
+        //mDrawerList.setAdapter(new ListViewAdapterDrawer(this, sensorArray));
+          //mDrawerList.setAdapter(fragmentTransaction.add(R.id.left_drawer, listViewDrawerFragment, "ListViewDrawerFrag").commit());
         // mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         // enable ActionBar app icon to behave as action to toggle nav drawer
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

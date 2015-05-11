@@ -27,9 +27,19 @@ public class ListViewAdapterDrawer extends ArrayAdapter<String> {
         imageViewSensor = (ImageView) view.findViewById(R.id.imageViewSensor);
         textViewSensor = (TextView) view.findViewById(R.id.textViewSensor);
 
-        imageViewSensor.setImageResource(R.drawable.ic_accelerometer);
-        textViewSensor.setText(getItem(position));
+        //imageViewSensor.setImageResource(R.drawable.ic_accelerometer);
+        //textViewSensor.setText(getItem(position));
 
+        switch (position){
+            case 0:
+                imageViewSensor.setImageResource(R.drawable.ic_accelerometer);
+                textViewSensor.setText(getItem(position));
+                break;
+            case 1:
+                imageViewSensor.setImageResource(R.drawable.ic_magnetometer);
+                textViewSensor.setText(getItem(position));
+                break;
+        }
         return view;
 
     }

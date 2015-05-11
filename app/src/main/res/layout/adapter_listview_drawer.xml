@@ -7,10 +7,12 @@
     android:orientation="vertical"
     android:id="@+id/linearLayoutAdapter"
     >
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+       >
 
     <ImageView android:id="@+id/imageViewSensor" android:layout_width="30dp"
         android:layout_height="30dp"
@@ -39,17 +41,6 @@
         android:visibility="gone"/>
     </LinearLayout>
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/buttonLogging"
-        android:text="@string/button_logging"
-        android:textColor="@android:color/white"
-        android:background="@drawable/selector_log_button"
-        android:layout_marginLeft="25dp"
-        android:layout_marginRight="25dp"
-        android:layout_marginBottom="10dp"
-        android:layout_gravity="end"
-        android:onClick="onClickLogging"/>
+
 
 </LinearLayout>

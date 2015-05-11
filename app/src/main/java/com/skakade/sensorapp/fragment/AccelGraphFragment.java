@@ -40,13 +40,15 @@ public class AccelGraphFragment extends Fragment implements SensorEventListener 
 
     private Redrawer redrawer;
 
-    private TextView textViewXValue, textViewYValue, textViewZValue, textViewAccuracy;
+    private TextView textViewGraph, textViewXValue, textViewYValue, textViewZValue, textViewAccuracy;
 
     private String xLable = "X", yLable = "Y", zLable = "Z", titleAccuracy = "Accuracy";
 
     private SensorManager mSensorManager;
     private Sensor mSensor;
     private float startRange, endRange;
+
+    String sensorName;
 
     @Override
     public void onAttach(Activity activity) {
@@ -56,9 +58,9 @@ public class AccelGraphFragment extends Fragment implements SensorEventListener 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        sensorName = this.getArguments().getString("sensorName");
         return inflater.inflate(R.layout.fragment_graph, container, false);
     }
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -67,9 +69,20 @@ public class AccelGraphFragment extends Fragment implements SensorEventListener 
         textViewYValue = (TextView) getView().findViewById(R.id.textView_graph_YValue);
         textViewZValue = (TextView) getView().findViewById(R.id.textView_graph_ZValue);
         textViewAccuracy = (TextView) getView().findViewById(R.id.textView_graph_accuracy);
+        textViewGraph = (TextView) getView().findViewById(R.id.textView_graph);
+
+        textViewGraph.setText(sensorName);
 
         mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
-        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+            switch (sensorName) {
+                case "Accelerometer":
+                    mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+                    break;
+                case "Magnetometer":
+                    mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+                    break;
+            }
 
         mXYPlot = (XYPlot) getView().findViewById(R.id.xyplot_accel_graph);
 
@@ -153,7 +166,7 @@ public class AccelGraphFragment extends Fragment implements SensorEventListener 
 
     @Override
     public synchronized void onSensorChanged(SensorEvent event) {
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
+        //if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED){
             if (mXSeries.size() > GRAPH_SIZE){
                 mXSeries.removeFirst();
                 mYSeries.removeFirst();
@@ -167,8 +180,9 @@ public class AccelGraphFragment extends Fragment implements SensorEventListener 
             textViewXValue.setText(xLable + ": " + event.values[0]);
             textViewYValue.setText(yLable + ": " + event.values[1]);
             textViewZValue.setText(zLable + ": " + event.values[2]);
+
         }
-    }
+    //}
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {

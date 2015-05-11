@@ -36,8 +36,15 @@ public class ListViewFragment extends Fragment implements ListView.OnItemClickLi
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
         accelGraphFragment = new AccelGraphFragment();
 
+        Bundle bundle = new Bundle();
+        String sensorName = (String) parent.getItemAtPosition(position);
+        bundle.putString("sensorName",sensorName);
+        accelGraphFragment.setArguments(bundle);
+        //int position = parent.getI
+        //accelGraphFragment.setArguments(position);
         getFragmentManager().beginTransaction().replace(R.id.content_frame, accelGraphFragment, "AccelGraphFrag")
                 .addToBackStack(null)
                 .commit();

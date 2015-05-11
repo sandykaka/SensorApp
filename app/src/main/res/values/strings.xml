@@ -9,8 +9,10 @@
     <string name="drawer_close">Drawer Close</string>
     <string name="button_logging">Start Logging</string>
     <string name="textViewLogging">logging</string>
+    <string name="sensorName">Sensor Name</string>
     <string-array name="sensor_array">
         <item>Accelerometer</item>
+        <item>Magnetometer</item>
     </string-array>
 
 </resources>
