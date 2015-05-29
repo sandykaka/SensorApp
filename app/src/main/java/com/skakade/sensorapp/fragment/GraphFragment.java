@@ -82,6 +82,9 @@ public class GraphFragment extends Fragment implements SensorEventListener {
                 case "Magnetometer":
                     mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
                     break;
+                case "Gyroscope":
+                    mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+                    break;
             }
 
         mXYPlot = (XYPlot) getView().findViewById(R.id.xyplot_accel_graph);

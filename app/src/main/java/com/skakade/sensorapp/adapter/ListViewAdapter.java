@@ -39,6 +39,14 @@ public class ListViewAdapter extends ArrayAdapter<String> {
                 imageViewSensor.setImageResource(R.drawable.ic_magnetometer);
                 textViewSensor.setText(getItem(position));
                 break;
+            case 2:
+                imageViewSensor.setImageResource(R.drawable.ic_gryrometer);
+                textViewSensor.setText(getItem(position));
+                break;
+            default:
+                imageViewSensor.setImageResource(R.drawable.ic_launcher);
+                textViewSensor.setText("sensor name");
+                break;
         }
         return view;
 

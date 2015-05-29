@@ -12,7 +12,6 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.skakade.sensorapp.FileCreater;
@@ -26,7 +25,7 @@ import java.io.IOException;
 
 public class SensorFragment extends Fragment implements SensorEventListener {
 
-    TextView textViewAccelX, textViewAccelY, textViewAccelZ;
+    //TextView textViewAccelX, textViewAccelY, textViewAccelZ;
     private SensorManager mSensorManager;
     public Sensor mSensor;
     public String sensorName;
@@ -54,9 +53,9 @@ public class SensorFragment extends Fragment implements SensorEventListener {
 
         isExternalStorageWritable();
 
-        textViewAccelX = (TextView) getView().findViewById(R.id.textViewAccelX);
-        textViewAccelY = (TextView) getView().findViewById(R.id.textViewAccelY);
-        textViewAccelZ = (TextView) getView().findViewById(R.id.textViewAccelZ);
+       // textViewAccelX = (TextView) getView().findViewById(R.id.textViewAccelX);
+        //textViewAccelY = (TextView) getView().findViewById(R.id.textViewAccelY);
+        //textViewAccelZ = (TextView) getView().findViewById(R.id.textViewAccelZ);
 
 
         mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
@@ -66,6 +65,9 @@ public class SensorFragment extends Fragment implements SensorEventListener {
                 break;
             case "Magnetometer":
                 sensorType = Sensor.TYPE_MAGNETIC_FIELD;
+                break;
+            case "Gyroscope":
+                sensorType = Sensor.TYPE_GYROSCOPE;
                 break;
         }
 
@@ -104,9 +106,9 @@ public class SensorFragment extends Fragment implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
         //DecimalFormat decimalFormat = new DecimalFormat("0.0000");
         if (event.sensor.getType() == sensorType) {
-            textViewAccelX.setText("Accel X: " + event.values[0]);
-            textViewAccelY.setText("Accel Y: " + event.values[1]);
-            textViewAccelZ.setText("Accel Z: " + event.values[2]);
+            //textViewAccelX.setText("Accel X: " + event.values[0]);
+            //textViewAccelY.setText("Accel Y: " + event.values[1]);
+            //textViewAccelZ.setText("Accel Z: " + event.values[2]);
             float xValue = event.values[0];
             float yValue = event.values[1];
             float zValue = event.values[2];
