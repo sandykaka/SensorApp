@@ -24,7 +24,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class AccelFragment extends Fragment implements SensorEventListener {
+public class SensorFragment extends Fragment implements SensorEventListener {
 
     TextView textViewAccelX, textViewAccelY, textViewAccelZ;
     private SensorManager mSensorManager;
@@ -33,11 +33,14 @@ public class AccelFragment extends Fragment implements SensorEventListener {
     private FileCreater fileCreater;
     private FileSDWriter fileSDWriter;
     public File fileName;
+    private String sensorChecked;
+    private int sensorType;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_accel, container, false);
+        sensorChecked = this.getArguments().getString("sensorChecked");
 
         return view;
 
@@ -57,11 +60,27 @@ public class AccelFragment extends Fragment implements SensorEventListener {
 
 
         mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
-        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        switch (sensorChecked){
+            case "Accelerometer":
+                sensorType = Sensor.TYPE_ACCELEROMETER;
+                break;
+            case "Magnetometer":
+                sensorType = Sensor.TYPE_MAGNETIC_FIELD;
+                break;
+        }
+
+
+        mSensor = mSensorManager.getDefaultSensor(sensorType);
+
 
         mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
 
-        sensorName = mSensor.getName();
+        try {
+            sensorName = mSensor.getName();
+        } catch (Exception e) {
+            Toast.makeText(getActivity(),"couldn't get sensorName", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
 
         fileCreater = new FileCreater();
 
@@ -84,7 +103,7 @@ public class AccelFragment extends Fragment implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         //DecimalFormat decimalFormat = new DecimalFormat("0.0000");
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+        if (event.sensor.getType() == sensorType) {
             textViewAccelX.setText("Accel X: " + event.values[0]);
             textViewAccelY.setText("Accel Y: " + event.values[1]);
             textViewAccelZ.setText("Accel Z: " + event.values[2]);

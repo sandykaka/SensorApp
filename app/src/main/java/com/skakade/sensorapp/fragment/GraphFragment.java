@@ -29,7 +29,7 @@ import com.skakade.sensorapp.R;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 
-public class AccelGraphFragment extends Fragment implements SensorEventListener {
+public class GraphFragment extends Fragment implements SensorEventListener {
 
     private static final int GRAPH_SIZE = 300;
     private XYPlot mXYPlot = null;

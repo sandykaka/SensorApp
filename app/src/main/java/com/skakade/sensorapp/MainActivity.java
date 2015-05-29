@@ -18,12 +18,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.skakade.sensorapp.fragment.AccelFragment;
+import com.skakade.sensorapp.adapter.ListViewAdapterDrawer;
+import com.skakade.sensorapp.fragment.SensorFragment;
 import com.skakade.sensorapp.fragment.ListViewDrawerFragment;
 import com.skakade.sensorapp.fragment.ListViewFragment;
+
+import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -39,16 +43,22 @@ public class MainActivity extends ActionBarActivity {
     private CharSequence mTitle;
     private String[] sensorArray;
     private Button buttonLogging;
-    private boolean isLogEnabled = false;
+    private boolean isLogDisabled = false;
     private boolean isSensorChecked = false;
-    private CheckBox checkBoxAccel;
+    private boolean isAnySensorChecked = false;
+    private CheckBox checkBoxSensor;
     private TextView textViewLogging;
-
-    AccelFragment accelFragment;
+    private ListView listViewDrawerSensors;
+    private String sensorChecked;
+    //private CheckBox[] checkBoxArray = new CheckBox[10];
+    private ArrayList<CheckBox> checkBoxArray = new ArrayList<>();
+    SensorFragment sensorFragment;
     private FileCreater fileCreater;
 
     private FileSDWriter fileSDWriter;
 
+    private ListViewAdapterDrawer listViewAdapterDrawer;
+    private String[] info;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,43 +179,89 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-
     public void onClickLogging(View view) {
 
         buttonLogging = (Button) findViewById(R.id.buttonLogging);
-        checkBoxAccel = (CheckBox) findViewById(R.id.checkBoxAccel);
-        textViewLogging = (TextView) findViewById(R.id.textViewLogging);
+        //textViewLogging = (TextView) findViewById(R.id.textViewLogging);
+        listViewDrawerSensors = (ListView) findViewById(R.id.listViewDrawerSensors);
+        listViewAdapterDrawer = (ListViewAdapterDrawer) listViewDrawerSensors.getAdapter();
+        listViewAdapterDrawer.getItem(1);
+        //listViewAdapterDrawer = (ListViewAdapterDrawer) listViewDrawerSensors.getItemAtPosition(pos);
 
-        if (checkBoxAccel.isChecked()) {
-            isSensorChecked = true;
-            isLogEnabled = true;
+        //View view1 = listViewDrawerSensors.getChildAt(0);
+
+        for (int i = 0; i <= listViewDrawerSensors.getChildCount() - 1; i++) {
+            View viewListChild = listViewDrawerSensors.getChildAt(i);
+            checkBoxSensor = (CheckBox) viewListChild.findViewById(R.id.checkBoxSensor);
+            checkBoxArray.add(checkBoxSensor);
+            textViewLogging = (TextView) viewListChild.findViewById(R.id.textViewLogging);
+
+            Log.i("listD", "listD: " + textViewLogging);
+
+            if ((checkBoxSensor.getVisibility() == View.GONE)) {
+                //buttonLogging.setText("Start Logging");
+                textViewLogging.setVisibility(View.GONE);
+                checkBoxSensor.setVisibility(View.VISIBLE);
+                isLogDisabled = true;
+                stopLogging();
+                Log.i("listS", "listS: "+textViewLogging);
+
+            }
+            if (checkBoxSensor.isChecked()) {
+                isSensorChecked = true;
+                //isLogEnabled = true;
+                isAnySensorChecked = true;
+            }
+            if (isSensorChecked) {
+                textViewLogging.setVisibility(View.VISIBLE);
+                checkBoxSensor.setVisibility(View.GONE);
+                isSensorChecked = false;
+                checkBoxSensor.setChecked(false);
+                //Toast.makeText(this,"child: " + listViewDrawerSensors.getItemAtPosition(i), Toast.LENGTH_SHORT).show();
+                sensorChecked = (String) listViewDrawerSensors.getItemAtPosition(i);
+                startLogging(sensorChecked);
+                //return;
+            }
         }
-        if (isSensorChecked) {
-            buttonLogging.setText("Stop Logging");
-            textViewLogging.setVisibility(View.VISIBLE);
-            checkBoxAccel.setVisibility(View.GONE);
-            isSensorChecked = false;
-            checkBoxAccel.setChecked(false);
-            startLogging();
+
+        if (isLogDisabled){
+            isLogDisabled = false;
+            buttonLogging.setText("Start Logging");
+            int j = checkBoxArray.size()-1;
+            while (j >= 0){
+                if (!checkBoxArray.get(j).isEnabled()) {
+                    checkBoxArray.get(j).setEnabled(true);
+                }
+                j--;
+            }
             return;
         }
-        if (isLogEnabled){
-            buttonLogging.setText("Start Logging");
-            textViewLogging.setVisibility(View.GONE);
-            checkBoxAccel.setVisibility(View.VISIBLE);
-            isLogEnabled = false;
-            stopLogging();
 
-        }else {
+        if (!isAnySensorChecked) {
             Toast.makeText(this, "Please check sensor to log", Toast.LENGTH_SHORT).show();
+
+            //return;
+        }else {
+            isAnySensorChecked = false;
+            buttonLogging.setText("Stop Logging");
+            int j = checkBoxArray.size()-1;
+            while (j >= 0) {
+                if (checkBoxArray.get(j).getVisibility() == View.VISIBLE) {
+                    checkBoxArray.get(j).setEnabled(false);
+                }
+                    j--;
+                }
         }
-        }
+}
 
+    public void startLogging(String sensorChecked) {
+        sensorFragment = new SensorFragment();
 
-    public void startLogging() {
-        accelFragment = new AccelFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("sensorChecked",sensorChecked);
+        sensorFragment.setArguments(bundle);
 
-        getFragmentManager().beginTransaction().add(accelFragment, "AccelFrag").commit();
+        getFragmentManager().beginTransaction().add(sensorFragment, "AccelFrag").commit();
 
         Log.i("start", "startLogging");
 
@@ -217,12 +273,12 @@ public class MainActivity extends ActionBarActivity {
 
         listViewFragment.onPause();
 
-        Toast.makeText(this,"fileName: " + accelFragment.getFileName(), Toast.LENGTH_LONG).show();
+        Toast.makeText(this,"fileName: " + sensorFragment.getFileName(), Toast.LENGTH_LONG).show();
 
 // Tell the media scanner about the new file so that it is
         // immediately available to the user.
         MediaScannerConnection.scanFile(this,
-                new String[]{accelFragment.fileName.toString()}, null,
+                new String[]{sensorFragment.fileName.toString()}, null,
                 new MediaScannerConnection.OnScanCompletedListener() {
                     public void onScanCompleted(String path, Uri uri) {
                         Log.i("ExternalStorage", "Scanned " + path + ":");

@@ -30,7 +30,7 @@
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/checkBoxAccel"
+        android:id="@+id/checkBoxSensor"
         android:checked="false"/>
 
     <TextView
